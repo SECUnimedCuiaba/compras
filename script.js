@@ -217,7 +217,7 @@ function criarCard(data, docId) {
   let osHtml = '';
   if (data.os) {
     osHtml += `<div class="os-container">`;
-    osHtml += `<p><strong>OS:</strong> ${data.os}</p>`;
+    osHtml += `<p><strong>OS:</strong></p>`;
     if (isUrl(data.os)) {
       osHtml += `<a href="${data.os}" target="_blank" rel="noopener noreferrer" class="os-link-btn" title="Abrir link">Abrir</a>`;
     }

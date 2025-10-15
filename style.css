@@ -1,0 +1,237 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f4f6f8;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0366d6;
+  color: white;
+  padding: 1rem 2rem;
+}
+
+header button {
+  background: white;
+  color: #0366d6;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#kanban {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.column {
+  background: #e9ecef;
+  border-radius: 8px;
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  min-height: 400px;
+}
+
+.column h2 {
+  text-align: center;
+  font-size: 1rem;
+  background: #dee2e6;
+  padding: 0.5rem;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex: 1;
+  min-height: 100px;
+}
+
+.card {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0.7rem;
+  cursor: grab;
+  transition: opacity 0.2s, transform 0.2s;
+  position: relative; /* Para posicionar o botão */
+}
+
+.card:active {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+.card h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+}
+
+.card p {
+  margin: 0 0 0.2rem;
+  font-size: 0.8rem;
+  color: #555;
+  word-wrap: break-word; /* Garante que o texto quebre */
+}
+
+/* NOVO: Estilos para o campo OS */
+.card .os-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaçamento entre o texto e o botão */
+  margin-bottom: 10px; /* Espaçamento entre OS e a descrição */
+}
+
+.card .os-link-btn {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #0366d6;
+  color: white;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  font-weight: bold;
+  white-space: nowrap; /* Evita que o texto do botão quebre */
+}
+.card .os-link-btn:hover {
+  background-color: #0256b3;
+}
+
+
+.card .info {
+  font-size: 0.75rem;
+  color: #888;
+  border-top: 1px solid #eee;
+  padding-top: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.card .edit-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: color 0.2s;
+}
+
+.card .edit-btn:hover {
+  color: #0366d6;
+  background: #f0f0f0;
+}
+
+#loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Modal Styles (compartilhado para create e edit) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  animation: slideIn 0.3s;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+.close:hover {
+  color: #000;
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #0366d6;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal label {
+  font-weight: bold;
+  color: #555;
+}
+
+.modal input, .modal textarea {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.modal button[type="submit"] {
+  background: #0366d6;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.modal button[type="submit"]:hover {
+  background: #0256b3;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { transform: translateY(-50px); } to { transform: translateY(0); } }
+
+@media (max-width: 600px) {
+  .modal-content { margin: 20% auto; width: 95%; }
+}

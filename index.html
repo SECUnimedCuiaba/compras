@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Solicitações de Compra</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Controle de Solicitações de Compra</h1>
+    <button id="novoCard">+ Nova Solicitação</button>
+  </header>
+
+  <main id="kanban">
+    <div id="loader">Carregando...</div>
+  </main>
+
+  <div id="modalCreate" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Nova Solicitação</h2>
+      <form id="formCreate">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" required maxlength="100" />
+
+        <label for="os">OS (Nº ou Link):</label>
+        <input type="text" id="os" maxlength="200" />
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" rows="3" maxlength="500"></textarea>
+
+        <label for="responsavel">Responsável (Criador):</label>
+        <input type="text" id="responsavel" value="Não definido" />
+
+        <button type="submit">Criar Solicitação</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalEdit" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Editar Solicitação</h2>
+      <form id="formEdit">
+        <input type="hidden" id="editDocId" />
+        <label for="editTitulo">Título:</label>
+        <input type="text" id="editTitulo" required maxlength="100" />
+        
+        <label for="editOs">OS (Nº ou Link):</label>
+        <input type="text" id="editOs" maxlength="200" />
+
+        <label for="editDescricao">Descrição:</label>
+        <textarea id="editDescricao" rows="3" maxlength="500"></textarea>
+
+        <label for="editResponsavel">Responsável (Criador):</label>
+        <input type="text" id="editResponsavel" />
+
+        <button type="submit">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

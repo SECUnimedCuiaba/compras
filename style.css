@@ -26,10 +26,10 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px;
-  width: 300px;
+  left: -250px;
+  width: 250px;
   height: 100vh;
-  background: rgb(50, 36, 99);
+  background: rgb(24, 13, 65);
   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
   transition: left 0.3s ease;
   z-index: 1001;
@@ -64,6 +64,7 @@ body {
   border-bottom: 1px solid #eee;
   background: rgb(50, 36, 99);
   color: white;
+  height: 28px;
 }
 
 .sidebar-header h3 {
@@ -269,40 +270,77 @@ header {
   background: none;
   border: none;
   color: white;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   cursor: pointer;
 }
 
-.visibility-toggle {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
+
+/* Estilos para as novas chaves deslizantes */
+.visibility-toggles-container {
+    display: flex;
+    align-items: center;
+    gap: 90px; /* Espaçamento entre os toggles */
+    margin-left: 25px; 
+    font-size: 0.8rem;
 }
 
-.visibility-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+.toggle-control {
+    display: flex;
+    align-items: center;
+    gap: px;
+    color: white; /* Cor do texto no header */
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    justify-content: space-between;
+    width: 80px;
+    
 }
 
-.visibility-toggle.active {
-  position: relative;
+.toggle-control label { /* Afeta a label de texto */
+    /* Remove o espaçamento de 8px que causaria o slider a ficar grudado */
+    margin-right: 5px; 
 }
 
-.visibility-toggle.active::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: white;
-  transform: rotate(-45deg);
+/* Esconde o input checkbox original */
+.toggle-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Estilo da chave deslizante */
+.toggle-slider {
+    position: relative;
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #7f8c8d; /* Cinza para desligado */
+    border-radius: 20px;
+    transition: background-color 0.4s;
+    flex-shrink: 0;
+}
+
+/* O círculo (thumb) */
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Quando o checkbox está checado (Ligado) */
+.toggle-input:checked + .toggle-slider {
+    background-color: #2ecc71; /* Verde para ligado */
+}
+
+.toggle-input:checked + .toggle-slider:before {
+    transform: translateX(20px);
 }
 
 .menu-toggle {
@@ -341,6 +379,7 @@ header {
   color: white;
   font-weight: 600;
 }
+
 
 /* ===== PERFIL DO USUÁRIO (Sidebar) ===== */
 .user-profile {

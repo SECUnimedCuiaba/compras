@@ -29,15 +29,15 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const etapas = [
-  { id: 1, nome: "Criar pedido de compras", cor: "#f9e79f" },
-  { id: 2, nome: "Pedido Feito - Enviar para gestor aprovar", cor: "#aed6f1" },
-  { id: 3, nome: "Com gestores — aguardando aprovação", cor: "#d6dbdf" },
-  { id: 4, nome: "Aprovada — enviar ao Compras", cor: "#f5cba7" },
-  { id: 5, nome: "Enviado ao Compras — aguardando orçamento", cor: "#e5e7e9" },
-  { id: 6, nome: "Retorno do Compras para validação", cor: "#d5f5e3" },
-  { id: 7, nome: "Validado - Aguardando Ordem de Compra", cor: "#fadbd8" },
-  { id: 8, nome: "Ordem de Compra Emitida. Aguardando Material", cor: "#fcf3cf" },
-  { id: 9, nome: "Processo encerrado", cor: "#d4efdf" },
+  { id: 1, nome: "Pedido a Fazer", cor: "#f9e79f" },
+  { id: 2, nome: "Pedido Feito - Solicitar Aprovação", cor: "#aed6f1" },
+  { id: 3, nome: "Aguardando Aprovação do Gestor", cor: "#f5cba7" },
+  { id: 4, nome: "Aprovado — Enviar ao Compras", cor: "#9ce7c8ff" },
+  { id: 5, nome: "Aguardando Orçamento", cor: "#92f0f7ff" },
+  { id: 6, nome: "Compras Solicita Validação", cor: "#d5f5e3" },
+  { id: 7, nome: "Validado - Aguardando Compra", cor: "#fadbd8" },
+  { id: 8, nome: "Aguardando Material", cor: "#fcf3cf" },
+  { id: 9, nome: "Material Recebido - Processo encerrado", cor: "#d4efdf" },
 ];
 
 // Elementos do DOM
@@ -241,14 +241,12 @@ function carregarCards() {
   });
 }
 
-// Substitua esta função inteira no seu script.js
-
 function criarCardElemento(data, docId) {
     const card = document.createElement("div");
     card.className = "card";
     card.draggable = true;
     card.dataset.docId = docId;
-    card.dataset.etapaId = data.etapa; // Armazena a etapa original
+    card.dataset.etapaId = data.etapa; 
 
     if (data.visibilidade === "privado") card.classList.add("card-privado");
     
@@ -257,32 +255,43 @@ function criarCardElemento(data, docId) {
     if (data.ultimaAtualizacao) {
         const dataAtt = data.ultimaAtualizacao.toDate();
         infoAtualizacao = `
-            <strong>Últ. Att:</strong> ${dataAtt.toLocaleDateString("pt-BR")} ${dataAtt.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}<br>
-            <strong>Por:</strong> ${data.responsavelAtualizacao || "N/D"}<br>
+            <div class="info-atualizacao">
+                <strong>Atualizado em:</strong> ${dataAtt.toLocaleDateString("pt-BR")} ${dataAtt.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}<br>
+                <strong>Por:</strong> ${data.responsavelAtualizacao || "N/D"}<br>
+            </div>
         `;
     }
 
     const nomeCriador = usersNameCache[data.criadoPor] || "Desconhecido";
-
-    // ALTERAÇÃO PRINCIPAL AQUI:
-    // Removemos a condição "userLevel === 'admin'".
-    // Agora, só pode editar quem for o criador do card.
     const podeEditar = data.criadoPor === currentUser.uid;
+
+    let osHtml = "";
+    if (data.os) {
+        osHtml = `<div class="os-container">`;
+        if (isUrl(data.os)) {
+            osHtml += `<a href="${data.os}" target="_blank" rel="noopener noreferrer" class="os-link-btn" title="Abrir link">Abrir OS</a>`;
+        } else {
+            osHtml += `<span class="os-number">OS: ${escapeHTML(data.os)}</span>`;
+        }
+        osHtml += `</div>`;
+    }
 
     card.innerHTML = `
         ${data.visibilidade === "privado" ? '<div class="card-privado-indicator">PRIVADO</div>' : ""}
         <h3>${escapeHTML(data.titulo)}</h3>
-        ${data.os ? `<div class="os-container"><span class="os-number">OS: ${escapeHTML(data.os)}</span></div>` : ""}
+        
+        ${osHtml}
         <p>${escapeHTML(data.descricao || "")}</p>
         <div class="info">
-            <strong>Criado por:</strong> ${escapeHTML(nomeCriador)}<br>
-            <strong>Criado em:</strong> ${dataCriacao}<br>
+            <div class="info-criacao">
+                <strong>Criado por:</strong> ${escapeHTML(nomeCriador)}<br>
+                <strong>Data:</strong> ${dataCriacao}<br>
+            </div>
             ${infoAtualizacao}
         </div>
         ${podeEditar ? `<button class="edit-btn" title="Editar">✏️</button>` : ""}
     `;
 
-    // O event listener é adicionado se o botão existir
     card.querySelector(".edit-btn")?.addEventListener("click", (e) => {
         e.stopPropagation();
         abrirEdicao(data, docId);
@@ -743,4 +752,13 @@ function escapeHTML(str) {
     const p = document.createElement("p");
     p.appendChild(document.createTextNode(str));
     return p.innerHTML;
+}
+
+function isUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }

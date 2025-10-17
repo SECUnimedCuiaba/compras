@@ -54,14 +54,25 @@
               <span></span>
             </button>
             <span id="headerUserName" class="user-name-header"></span>
-              <button id="visibilityToggle" class="visibility-toggle" title="Mostrar apenas meus cards">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
+             
+            
+            
+            <div id="visibilityTogglesContainer" class="visibility-toggles-container">
+                <div class="toggle-control">
+                    <label for="toggleMyOrders">Meus Pedidos</label>
+                    <input type="checkbox" id="toggleMyOrders" class="toggle-input" checked> 
+                    <label for="toggleMyOrders" class="toggle-slider"></label> 
+                </div>
+                <div class="toggle-control">
+                    <label for="toggleOtherOrders">Outros Pedidos</label>
+                    <input type="checkbox" id="toggleOtherOrders" class="toggle-input" checked>
+                    <label for="toggleOtherOrders" class="toggle-slider"></label>
+                </div>
+            </div>
+
+
           </div>
-          <h1 class="header-title">Controle de Solicitações</h1>
+          <h1 class="header-title">Controle de Solicitações de Compra</h1>
           <button id="novoCard" class="btn-primary">+ Nova Solicitação</button>
         </header>
 
@@ -82,7 +93,7 @@
                 </div>
                 <div class="form-group">
                   <label for="profileEmail">E-mail (não editável aqui):</label>
-                  <input type="email" id="profileEmail" required readonly />
+                  <input type="email" id="profileEmail" required readonly autocomplete="email" />
                 </div>
                 <div class="form-group">
                   <label for="profilePassword">Nova Senha (deixe em branco para manter a atual):</label>
@@ -172,7 +183,7 @@
           <label for="userName">Nome:</label>
           <input type="text" id="userName" required />
           <label for="userEmail">E-mail:</label>
-          <input type="email" id="userEmail" required />
+          <input type="email" id="userEmail" required autocomplete="email" />
           <label for="userPassword">Senha (mínimo 6 caracteres):</label>
           <input type="password" id="userPassword" required minlength="6" autocomplete="new-password"/>
           <label for="userLevel">Nível de Acesso:</label>
@@ -195,7 +206,7 @@
           <label for="editUserName">Nome:</label>
           <input type="text" id="editUserName" required />
           <label for="editUserEmail">E-mail (não é possível alterar):</label>
-          <input type="email" id="editUserEmail" required readonly />
+          <input type="email" id="editUserEmail" required readonly autocomplete="email" />
           <label for="editUserLevel">Nível de Acesso:</label>
           <select id="editUserLevel" required>
             <option value="operador">Operador</option>

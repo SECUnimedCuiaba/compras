@@ -63,7 +63,10 @@ let currentUser = null;
 let userLevel = null;
 let userName = null;
 let userDocId = null;
-let filtroPrivados = false;
+
+// Variáveis de estado para os novos toggles, com persistência no localStorage
+let showMyOrders = true; 
+let showOtherOrders = true; 
 let usersNameCache = {}; // Cache de UID -> Nome
 
 // =================================================================================
@@ -150,8 +153,19 @@ function setupEventListeners() {
   if (userLevel === 'admin') {
     document.getElementById("novoUsuario").addEventListener("click", () => modalUserCreate.style.display = "block");
   }
-  document.getElementById("visibilityToggle").addEventListener("click", toggleVisibilityFilter);
+  
+  // Novos Listeners para as Chaves Deslizantes
+  const toggleMyOrders = document.getElementById("toggleMyOrders");
+  const toggleOtherOrders = document.getElementById("toggleOtherOrders");
 
+  if (toggleMyOrders && toggleOtherOrders) {
+    // Carrega estado inicial e adiciona listeners
+    toggleMyOrders.checked = showMyOrders;
+    toggleOtherOrders.checked = showOtherOrders;
+    
+    toggleMyOrders.addEventListener("change", () => updateVisibilityFilter('my'));
+    toggleOtherOrders.addEventListener("change", () => updateVisibilityFilter('others'));
+  }
   // Fechar Modais
   closeModals.forEach(close => close.addEventListener("click", () => close.parentElement.parentElement.style.display = "none"));
   window.addEventListener("click", (e) => {
@@ -179,13 +193,34 @@ function showSection(sectionId) {
   });
 }
 
-function toggleVisibilityFilter() {
-  filtroPrivados = !filtroPrivados;
-  const toggleButton = document.getElementById("visibilityToggle");
-  toggleButton.classList.toggle("active", filtroPrivados);
-  toggleButton.title = filtroPrivados ? "Mostrar todos os cards" : "Mostrar apenas meus cards";
-  carregarCards();
+function updateVisibilityFilter(type) {
+    const toggleMyOrders = document.getElementById("toggleMyOrders");
+    const toggleOtherOrders = document.getElementById("toggleOtherOrders");
+    
+    let localShowMyOrders = toggleMyOrders.checked;
+    let localShowOtherOrders = toggleOtherOrders.checked;
+
+    // Garante que pelo menos um está ativo
+    if (!localShowMyOrders && !localShowOtherOrders) {
+        if (type === 'my') {
+            localShowMyOrders = true;
+            toggleMyOrders.checked = true;
+        } else {
+            localShowOtherOrders = true;
+            toggleOtherOrders.checked = true;
+        }
+        alert("Pelo menos uma opção de visualização deve estar ativa.");
+    }
+    
+    // Atualiza o estado global e persistência
+    showMyOrders = localShowMyOrders;
+    showOtherOrders = localShowOtherOrders;
+    localStorage.setItem('showMyOrders', showMyOrders);
+    localStorage.setItem('showOtherOrders', showOtherOrders);
+
+    carregarCards();
 }
+
 
 // =================================================================================
 //  LÓGICA DO KANBAN (COLUNAS, CARDS, DRAG & DROP)
@@ -208,7 +243,7 @@ criarColunas(); // Cria as colunas uma vez na inicialização
 function carregarCards() {
   loader.style.display = "flex";
 
-  // CORREÇÃO: Cancela a inscrição do listener anterior para evitar vazamentos de memória
+  // Cancela a inscrição do listener anterior para evitar vazamentos de memória
   if (unsubscribe) {
     unsubscribe();
   }
@@ -217,16 +252,36 @@ function carregarCards() {
   const q = query(solicitacoesRef, orderBy("ultimaAtualizacao", "desc"));
 
   unsubscribe = onSnapshot(q, (querySnapshot) => {
+    // Limpa os cards existentes em todas as colunas
     document.querySelectorAll(".cards").forEach(cards => cards.innerHTML = "");
 
     querySnapshot.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       const isMeuCard = data.criadoPor === currentUser.uid;
       const isCardPublico = data.visibilidade === "publico";
+      
+      let shouldShow = false;
 
-      const deveMostrar = filtroPrivados ? isMeuCard : (isMeuCard || isCardPublico);
+      // Lógica de visualização baseada nas novas chaves deslizantes
+      
+      // 1. VERIFICAÇÃO DE MEUS PEDIDOS
+      if (isMeuCard) {
+        // Se o card pertence ao usuário logado, mostra se 'Meus Pedidos' está LIGADO.
+        shouldShow = showMyOrders;
+      } 
+      // 2. VERIFICAÇÃO DE PEDIDOS DE OUTROS
+      else { 
+        // Se o card NÃO pertence ao usuário logado (Pedido de Outro)
+        // Só pode ser visível se for público E se 'Pedidos de Outros' estiver LIGADO.
+        if (isCardPublico) {
+            shouldShow = showOtherOrders;
+        } else {
+            // Card privado de outro usuário. Nunca é visível para quem não é o criador.
+            shouldShow = false; 
+        }
+      }
 
-      if (deveMostrar) {
+      if (shouldShow) {
         const card = criarCardElemento(data, docSnapshot.id);
         const column = document.querySelector(`.column[data-id="${data.etapa}"] .cards`);
         if (column) {
